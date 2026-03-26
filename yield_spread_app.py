@@ -421,7 +421,7 @@ with tab1:
                 colorscale=[[0, CLR_NEG], [0.5, CLR_GRID], [1, CLR_10Y]],  # boje u HEX ili CSS
                 size=5,
                 opacity=0.7,
-                colorbar=dict(title="Spread %", tickfont=dict(color=CLR_TEXT),titlefont=dict(color=CLR_TEXT)
+                colorbar=dict(title="Spread %", tickfont=dict(color=CLR_TEXT),titlefont=dict(color=CLR_TEXT))
                 ),
             text=df["Date"].dt.strftime("%b %Y"),
             hovertemplate="<b>%{text}</b><br>3M: %{x:.2f}%<br>10Y: %{y:.2f}%<extra></extra>"

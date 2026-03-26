@@ -506,42 +506,42 @@ fig_both.update_layout(**layout_copy)
 st.plotly_chart(fig_both,use_container_width=True)
 
 if show_rec:
-        st.caption("🔴 Crveno osjenčanje = period inverzije krive prinosa (3M > 10Y)")
+    st.caption("🔴 Crveno osjenčanje = period inverzije krive prinosa (3M > 10Y)")
 
-    st.markdown("---")
-    st.markdown("#### Zasebni prikaz svake obveznice")
-    fig_sub = make_subplots(rows=2, cols=1, shared_xaxes=True,
-                            subplot_titles=("10-godišnji trezorski zapis", "3-mjesečni trezorski zapis"),
-                            vertical_spacing=0.1)
+st.markdown("---")
+st.markdown("#### Zasebni prikaz svake obveznice")
+fig_sub = make_subplots(rows=2, cols=1, shared_xaxes=True,
+                        subplot_titles=("10-godišnji trezorski zapis", "3-mjesečni trezorski zapis"),
+                        vertical_spacing=0.1)
 
-    fig_sub.add_trace(go.Scatter(x=df["Date"], y=df["Y10"],
+fig_sub.add_trace(go.Scatter(x=df["Date"], y=df["Y10"],
         line=dict(color=CLR_10Y, width=1.4), name="10Y",
         fill="tozeroy", fillcolor=f"rgba(88,166,255,0.06)"), row=1, col=1)
-    if show_ma:
+if show_ma:
         fig_sub.add_trace(go.Scatter(x=df["Date"], y=df["Y10_MA"],
             line=dict(color=CLR_10Y, width=2.2, dash="dot"), name=f"10Y MA"), row=1, col=1)
 
-    fig_sub.add_trace(go.Scatter(x=df["Date"], y=df["Y3M"],
+fig_sub.add_trace(go.Scatter(x=df["Date"], y=df["Y3M"],
         line=dict(color=CLR_3M, width=1.4), name="3M",
         fill="tozeroy", fillcolor=f"rgba(63,185,80,0.06)"), row=2, col=1)
-    if show_ma:
+if show_ma:
         fig_sub.add_trace(go.Scatter(x=df["Date"], y=df["Y3M_MA"],
             line=dict(color=CLR_3M, width=2.2, dash="dot"), name=f"3M MA"), row=2, col=1)
 
-    add_inversion_shading(fig_sub, df, row=1, col=1)
-    add_inversion_shading(fig_sub, df, row=2, col=1)
+add_inversion_shading(fig_sub, df, row=1, col=1)
+add_inversion_shading(fig_sub, df, row=2, col=1)
 
-    fig_sub.update_layout(**PLOTLY_LAYOUT,
+fig_sub.update_layout(**PLOTLY_LAYOUT,
         height=500,
         showlegend=False,
         title="")
-    fig_sub.update_yaxes(title_text="Prinos (%)")
-    st.plotly_chart(fig_sub, use_container_width=True)
+fig_sub.update_yaxes(title_text="Prinos (%)")
+st.plotly_chart(fig_sub, use_container_width=True)
 
     # ── Key differences ───────────────────────────
-    st.markdown("---")
-    ca, cb = st.columns(2)
-    with ca:
+st.markdown("---")
+ca, cb = st.columns(2)
+with ca:
         st.markdown('<div class="info-box">'
             '<strong>10-godišnji trezorski zapis (T-Note)</strong><br><br>'
             '• Dugoročni instrument sa dospijećem od 10 godina<br>'
@@ -550,7 +550,7 @@ if show_rec:
             '• Osjetljiv na fiskalne projekcije i rast BDP-a<br>'
             '• Tipično viši prinos usljed premije ročnosti'
             '</div>', unsafe_allow_html=True)
-    with cb:
+with cb:
         st.markdown('<div class="info-box">'
             '<strong>3-mjesečni trezorski zapis (T-Bill)</strong><br><br>'
             '• Kratkoročni instrument sa dospijećem od 91 dan<br>'
@@ -597,32 +597,48 @@ with tab3:
                      line_width=1.2, annotation_text="0%",
                      annotation_font=dict(color=CLR_NEG, size=11))
 
-    fig_sp.update_layout(**PLOTLY_LAYOUT,
-        title="Yield Spread: 10-godišnji minus 3-mjesečni trezorski zapis",
-        xaxis_title="Datum", yaxis_title="Spread (%)",
-        height=420,
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1,
-                    bgcolor=CLR_PAPER, bordercolor=CLR_GRID, font=dict(color=CLR_TEXT)))
-    st.plotly_chart(fig_sp, use_container_width=True)
+    layout_copy = PLOTLY_LAYOUT.copy()
+
+# Postavi svoje vrijednosti
+layout_copy.update(
+    title="Yield Spread: 10-godišnji minus 3-mjesečni trezorski zapis",
+    xaxis_title="Datum",
+    yaxis_title="Spread (%)",
+    height=460,
+    legend=dict(
+        orientation="h",
+        yanchor="bottom",
+        y=1.02,
+        xanchor="right",
+        x=1,
+        bgcolor=CLR_PAPER,
+        bordercolor=CLR_GRID,
+        font=dict(color=CLR_TEXT)
+    )
+)
+
+# Koristi kopiju u update_layout
+fig_sp.update_layout(**layout_copy)
+st.plotly_chart(fig_sp, use_container_width=True)
 
     # ── Spread stats row ───────────────────────────
-    k1, k2, k3, k4 = st.columns(4)
-    k1.metric("Maks. spread", f"{max_sp:.2f}%",
+k1, k2, k3, k4 = st.columns(4)
+k1.metric("Maks. spread", f"{max_sp:.2f}%",
               df.loc[df["Spread"].idxmax(), "Date"].strftime("%b %Y"))
-    k2.metric("Min. spread", f"{min_sp:.2f}%",
+k2.metric("Min. spread", f"{min_sp:.2f}%",
               df.loc[df["Spread"].idxmin(), "Date"].strftime("%b %Y"),
               delta_color="inverse")
-    k3.metric("Prosječni spread", f"{avg_sp:.2f}%")
-    k4.metric("Trajanje inverzije", f"{int((df['Spread']<0).sum())} mj.",
+k3.metric("Prosječni spread", f"{avg_sp:.2f}%")
+k4.metric("Trajanje inverzije", f"{int((df['Spread']<0).sum())} mj.",
               f"od {len(df)} mj. ukupno")
 
-    st.markdown("---")
+st.markdown("---")
 
     # ── Waterfall: spread change ───────────────────
-    st.markdown("#### Godišnji prosjek spreada")
-    df_yr = df.groupby(df["Date"].dt.year)["Spread"].mean().reset_index()
-    df_yr.columns = ["Godina","Spread"]
-    fig_yr = go.Figure(go.Bar(
+st.markdown("#### Godišnji prosjek spreada")
+df_yr = df.groupby(df["Date"].dt.year)["Spread"].mean().reset_index()
+df_yr.columns = ["Godina","Spread"]
+fig_yr = go.Figure(go.Bar(
         x=df_yr["Godina"].astype(str),
         y=df_yr["Spread"],
         marker_color=[CLR_10Y if v >= 0 else CLR_NEG for v in df_yr["Spread"]],
@@ -630,18 +646,18 @@ with tab3:
         textposition="outside",
         textfont=dict(size=9, color=CLR_TEXT),
     ))
-    fig_yr.update_layout(**PLOTLY_LAYOUT,
+fig_yr.update_layout(**PLOTLY_LAYOUT,
         title="Godišnji prosjek yield spreada (10Y − 3M)",
         xaxis_title="Godina", yaxis_title="Spread (%)",
         height=320)
-    fig_yr.add_hline(y=0, line_dash="dash", line_color=CLR_NEG, line_width=1)
-    st.plotly_chart(fig_yr, use_container_width=True)
+fig_yr.add_hline(y=0, line_dash="dash", line_color=CLR_NEG, line_width=1)
+st.plotly_chart(fig_yr, use_container_width=True)
 
     # ── Explanation ───────────────────────────────
-    st.markdown("---")
-    e1, e2 = st.columns(2)
-    with e1:
-        st.markdown('<div class="info-box">'
+st.markdown("---")
+e1, e2 = st.columns(2)
+with e1:
+    st.markdown('<div class="info-box">'
             '<strong>Šta znači yield spread?</strong><br><br>'
             'Yield spread (kriva prinosa) mjeri razliku između dugoročnih i kratkoročnih '
             'kamatnih stopa. Normalna kriva prinosa ima <strong style="color:#58a6ff">pozitivan spread</strong> '

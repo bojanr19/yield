@@ -503,7 +503,7 @@ layout_copy.update(
 )
 
 fig_both.update_layout(**layout_copy)
-    st.plotly_chart(fig_both, use_container_width=True)
+st.plotly_chart(fig_both,use_container_width=True)
 
     if show_rec:
         st.caption("🔴 Crveno osjenčanje = period inverzije krive prinosa (3M > 10Y)")
